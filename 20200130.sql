@@ -78,6 +78,7 @@ FROM emp
 GROUP BY deptno;
 
 
+
 SELECT to_char(hiredate,'YYYYMM'), count(*)
 FROM emp
 GROUP BY to_char(hiredate,'YYYYMM');
