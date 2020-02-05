@@ -138,45 +138,33 @@ select  sido, sigungu,gb
 from fastfood;
 
 
-select  sido, sigungu, count(*)
-from fastfood
-where gb = '맥도날드'
-group by sido, sigungu;
-
-(select count(*)
-from fastfood
-where gb = '맥도날드'
-group by sido, sigungu) mac;
-
-(select count(*)
-from fastfood
-where gb = '버거킹'
-group by sido, sigungu) bug;
-
-(select count(*)
-from fastfood
-where gb = 'KFC'
-group by sido, sigungu) kfc;
 
 select sido, sigungu, count(*) lot
 from fastfood
 where gb = '롯데리아'
 group by sido, sigungu; --lot
 
-select *
-from fastfood f join 
-(select sido,sigungu,gb
+
+select  sido, sigungu, count(*) other
 from fastfood
-where gb = '롯데리아') lot on (f.sido = lot.sido);
-
-
-
-SELECT SIDO, SIGUNGU, (((SELECT COUNT(*) FROM fastfood WHERE GB ='맥도날드')
-+(SELECT COUNT(*) FROM fastfood WHERE GB ='KFC')
-+(SELECT COUNT(*) FROM fastfood WHERE GB ='버거킹'))
-/(SELECT COUNT(*) FROM fastfood WHERE GB ='롯데리아')) jisu
-FROM fastfood
+where gb in ('맥도날드','KFC','버거킹')
 group by sido, sigungu;
+
+
+
+SELECT f1.sido, f1.sigungu, round((f2.other/f1.lot),2)수치
+FROM (select sido, sigungu, count(*) lot
+      from fastfood
+      where gb = '롯데리아'
+      group by sido, sigungu) f1 
+      JOIN (select  sido, sigungu, count(*) other
+            from fastfood
+            where gb in ('맥도날드','KFC','버거킹')
+            group by sido, sigungu) f2
+      ON (f1.sido = f2.sido and f1.sigungu = f2.sigungu)
+ORDER BY 수치 desc;
+
+
 
 
 
