@@ -82,8 +82,102 @@ DESC emp;
 INSERT INTO emp 
 VALUES(9998,'sally','SALESMAN',NULL,SYSDATE,1000,NULL,99);
 
+rollback;
+
+
+--여러건의 데이터를 한번에 INSERT : 
+--INSERT INTO 테이블명 (컬럼명1,컬럼명2,...)
+--SELECT ...
+--FROM ;
+INSERT INTO emp
+SELECT 9998,'sally','SALESMAN',NULL,SYSDATE,1000,NULL,99
+FROM dual
+    UNION ALL
+SELECT 9999,'brown','CLERK',NULL,to_date('20200205','yyyymmdd'),1100, NULL,99
+FROM dual;
+
+
+
+
+
+--UPDATE 쿼리
+--UPDATE 테이블명 SET 컬럼명1 = 갱신할 컬럼 값1, 컬럼명2 = 갱신할 컬럼 값2,...
+--WHERE 행 제한 조건
+--업데이트 쿼리 작성시 WHERE절이 존재하지 않으면 해당 테이블의 모든 행을 대상으로 업데이트가 일어난다.
+--UPDATE, DELETE 절에 WHERE절이 없을 경우 의도한게 맞는지 다시한번 확인한다.
+--WHERE절이 있다 하더라도 해당 조건으로 해당 테이블을 SELECT하는 쿼리를 작성하여 실행하면 UPDATE 대상 행을 조회 할 수 있으므로 
+--확인하고 실행하는 것도 사고 발생 방지에 도움이 된다.
+
+--99번 부서번호를 갖는 부서 정보가 DEPT테이블에 있는상황
+INSERT INTO dept VALUES(99,'DDIT','daejeon');
+
+SELECT * 
+FROM dept;
+
+--99번 부서번호를 갖는 부서의 dname 컬럼의 값을 '대덕IT', loc 컬럼의 값을 '영민빌딩'으로 업데이트
+
+UPDATE dept 
+SET dname = '대덕IT',loc = '영민빌딩'
+WHERE deptno = 99;
+
 SELECT *
-FROM emp;
+FROM dept;
+
+--10 => SUBQUERY
+--SMITH, WARD가 속한 부서에 소속된 직원 정보
+SELECT *
+FROM emp
+WHERE deptno IN(20,30);
+
+SELECT *
+FROM emp
+WHERE deptno IN(SELECT deptno
+                FROM emp
+                WHERE ename IN('SMITH','WARD'));
+
+--UPDATE시에도 서브쿼리 사용이 가능하다.
+INSERT INTO emp (empno,ename)
+VALUES(9999,'brown');
+--9999번 사원 deptno, job 정보를 SMITH 사원이 속한 부서정보, 담당업무로 업데이트
+UPDATE emp SET deptno = (SELECT deptno FROM emp WHERE ename = 'SMITH'), job = (SELECT job FROM emp WHERE ename = 'SMITH');
+
+select *
+from emp;
+
+--DELETE SQL : 특정 행을 삭제
+--DELETE [FROM] 테이블명
+--WHERE 행 제한 조건
+SELECT *
+FROM dept;
+
+--99번 부서번호에 해당하는 부서 정보 삭제
+DELETE dept
+WHERE deptno = 99;
+
+--SUBQUERY를 통해서 특정 행을 제한하는 조건을 갖는 DELETE
+--매니저가 7698 사번인 직원을 삭제
+DELETE emp
+WHERE mgr IN (7698, 7521, 7654, 7844, 7900);
+
+DELETE emp
+WHERE empno IN (SELECT empno
+               FROM emp
+               WHERE mgr = 7698);
+
+ROLLBACK;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
