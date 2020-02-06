@@ -134,46 +134,91 @@ WHERE deptno in(30, 40)
 ORDER BY deptno;
 ----------------------------------------------------------
 
-select  sido, sigungu,gb
-from fastfood;
+SELECT  sido, sigungu,gb
+FROM fastfood;
 
 
 
-select sido, sigungu, count(*) lot
-from fastfood
-where gb = '롯데리아'
-group by sido, sigungu; --lot
+SELECT sido, sigungu, count(*) lot
+FROM fastfood
+WHERE gb = '롯데리아'
+GROUP BY sido, sigungu; --lot
 
 
-select  sido, sigungu, count(*) other
-from fastfood
-where gb in ('맥도날드','KFC','버거킹')
-group by sido, sigungu;
+Select  sido, sigungu, count(*) other
+FROM fastfood
+WHERE gb IN ('맥도날드','KFC','버거킹')
+GROUP BY sido, sigungu;
+
+
+
+
+
+
 
 
 
 SELECT f1.sido, f1.sigungu, round((f2.other/f1.lot),2)수치
-FROM (select sido, sigungu, count(*) lot
-      from fastfood
-      where gb = '롯데리아'
-      group by sido, sigungu) f1 
-      JOIN (select  sido, sigungu, count(*) other
-            from fastfood
-            where gb in ('맥도날드','KFC','버거킹')
-            group by sido, sigungu) f2
+FROM (SELECT sido, sigungu, count(*) lot
+      From fastfood
+      WHERE gb = '롯데리아'
+      GROUP BY sido, sigungu) f1 
+      JOIN (SELECT  sido, sigungu, count(*) other
+            FROM fastfood
+            Where gb IN ('맥도날드','KFC','버거킹')
+            GROUP BY sido, sigungu) f2
       ON (f1.sido = f2.sido and f1.sigungu = f2.sigungu)
 ORDER BY 수치 desc;
 
+------------fastfood 테이블을 한번만 읽는 방식으로 작성하기-----------------
+SELECT sido, sigungu, ROUND((kfc+buk+mac)/lot,2) bugscore
+FROM
+(SELECT sido, sigungu,
+       NVL(SUM(DECODE(gb,'KFC',1)),0) kfc, NVL(SUM(DECODE(gb,'버거킹',1)),0) buk, 
+       NVL(SUM(DECODE(gb,'맥도날드',1)),0) mac, NVL(SUM(DECODE(gb,'롯데리아',1)),1) lot
+FROM fastfood
+WHERE gb IN('KFC','맥도날드','버거킹','롯데리아')
+GROUP BY sido, sigungu)
+ORDER BY bugscore desc;
+
+SELECT sido, sigungu, ROUND(sal/people) pri_sal
+FROM tax
+ORDER BY pri_sal desc;
+
+--햄버거지수 시도, 햄버거지수 시군구, 햄버거지수, 세금 시도, 세금 시군구, 개인별 근로소득액
+--햄버거 지수, 개인별 근로소득 금액 순위가 같은 시도별로 [조인]
+--같은 순위의 행끼리 조인
 
 
+SELECT b.n, b.sido, b.sigungu, b.bugscore, t.sido, t.sigungu, t.pri_sal
+FROM
+   (SELECT ROWNUM n, bug.sido, bug.sigungu, bug.bugscore
+    FROM
+        (SELECT sido, sigungu, ROUND((kfc+buk+mac)/lot,2) bugscore
+         FROM
+            (SELECT sido, sigungu,
+             NVL(SUM(DECODE(gb,'KFC',1)),0) kfc, NVL(SUM(DECODE(gb,'버거킹',1)),0) buk, 
+             NVL(SUM(DECODE(gb,'맥도날드',1)),0) mac, NVL(SUM(DECODE(gb,'롯데리아',1)),1) lot
+             FROM fastfood
+             WHERE gb IN('KFC','맥도날드','버거킹','롯데리아')
+             GROUP BY sido, sigungu)
+             ORDER BY bugscore desc) bug) b 
+JOIN
+    (SELECT ROWNUM n, t.sido, t.sigungu, t.pri_sal
+     FROM 
+           (SELECT sido, sigungu, ROUND(sal/people) pri_sal
+            FROM tax
+            ORDER BY pri_sal desc) t) t
+ON (b.n = t.n);
 
-
-
-
-
-
-
-
+--ROWNUM 사용 시 주의사항
+--1.SELECT ==> ORDER BY
+--정렬된 결과에 ROWNUM을 적용하기 위해서는 INLINE-VIEW
+--2.1번부터 순차적으로 조회가 되는 조건에서만 WHERE절에서 기술이 가능
+--ROWNUM = 1 (O)
+--ROWNUM = 2 (X)
+--ROWNUM < 10 (O)
+--ROWNUM > 10 (X)
 
 
 
