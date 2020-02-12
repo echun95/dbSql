@@ -87,6 +87,11 @@ SELECT *
 FROM USER_COL_COMMENTS
 WHERE TABLE_NAME IN('EMP','DEPT');
 
+SELECT *
+FROM USER_TAB_COMMENTS tab JOIN USER_COL_COMMENTS col 
+ON (tab.table_name = col.table_name and tab.table_name IN('CUSTOMER','CYCLE','DAILY','PRODUCT'));
+
+
 SELECT tab.table_name, tab.table_type, tab.comments tab_comment, col.column_name, col.comments col_comment
 FROM   (SELECT table_name, table_type, comments
         FROM USER_TAB_COMMENTS
@@ -96,6 +101,7 @@ FROM   (SELECT table_name, table_type, comments
          FROM USER_COL_COMMENTS
          WHERE TABLE_NAME IN('CUSTOMER','CYCLE','DAILY','PRODUCT')) col
         ON(tab.table_name = col.table_name);
+
 
 VIEW : QUERY
 TABLE처럼 미리 DBMS에 작성한 객체
