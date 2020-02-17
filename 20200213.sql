@@ -43,6 +43,7 @@ ROLE : 권한을 모아놓은 집합
 특정 ROLE에 권한을 부여하고 해당 ROLE을 사용자에게 부여
 해당 ROLE을 수정하게 되면 ROLE을 갖고 있는 모든 사용자에게 영향이 가기때문에 관리가 용이함
 권한 부여/회수
+ 
 시스템 권한 : GRANT 권한이름 TO 사용자 | ROLE이름;
 시스템 회수 : REVOKE 권한이름 FROM 사용자 | ROLE이름;
 
@@ -111,6 +112,7 @@ INSERT ALL
     INTO dept_test2
 SELECT 96,'대덕','중앙로' FROM DUAL UNION ALL
 SELECT 97,'IT','영민' FROM DUAL;
+rollback;
 
 테이블에 입력할 컬럼을 지정하여 multiple insert
 INSERT ALL
@@ -137,7 +139,7 @@ rollback;
 
 
 조건을 만족하는 첫번째 INSERT만 실행하는 multiple insert
-INSERT FIRST
+INSERT 
     WHEN deptno >= 97 THEN
         INTO dept_test (deptno,loc) VALUES(deptno,loc)
     WHEN deptno >= 96 THEN
@@ -147,7 +149,7 @@ INSERT FIRST
 SELECT 95 deptno,'대덕' dname,'중앙로' loc FROM DUAL UNION ALL
 SELECT 97,'IT','영민' FROM DUAL;
 
-rollback;
+.........................................rollback;
 
 오라클 객체 : 테이블에 여러개의 구역을 파티션으로 구분
 테이블 이름은 동일하나 값의 종류에 따라 오라클 내부적으로 별도의 분리된 영역에 데이터를 저장;
