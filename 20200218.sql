@@ -164,7 +164,7 @@ FROM
 (SELECT ename, sal, deptno
 FROM emp
 ORDER BY deptno, sal)b) b;
--------------------------------------
+--------------------°úÁ¦---------------------
 
 SELECT b.ename, b.sal, a.lv
 FROM
