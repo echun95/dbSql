@@ -116,7 +116,10 @@ XX회사(최상위 조직)에서 시작하여 하위 부서로 내려가는 계층 쿼리;
 SELECT dept_h.*, level, lpad(' ',(level-1)*4, ' ') || deptnm
 FROM dept_h
 START WITH deptcd = 'dept0'
-CONNECT BY PRIOR deptcd = p_deptcd;   --행과 행의 연결 조건( PRIOR XX회사 - 3가지 부(디자인부, 정보기획부, 정보시스템부)
+CONNECT BY PRIOR deptcd = p_deptcd;  
+
+
+--행과 행의 연결 조건( PRIOR XX회사 - 3가지 부(디자인부, 정보기획부, 정보시스템부)
 
 PRIOR XX회사.deptcd = 디자인부.p_deptcd
 PRIOR 디자인부.deptcd = 디자인팀 .p_deptcd
@@ -128,6 +131,7 @@ PRIOR 기획팀.deptcd = 기획파트.p_depcd
 PRIOR XX회사.deptcd = 정보시스템.p_deptcd
 PRIOR 정보시스템부.deptcd = 개발1팀.p_deptcd
 PRIOR 정보시스템부.deptcd = 개발2팀.p_deptcd;
+
 
 
 
