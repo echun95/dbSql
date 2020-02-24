@@ -180,21 +180,22 @@ END;
 /
 exec printdept_p(40);
 
-========PRO_1 실습===========;
+========PRO_1 실습 과제===========;
+SET SERVEROUTPUT ON;
+
 CREATE OR REPLACE PROCEDURE printemp(p_empno IN emp.empno%TYPE) IS
     v_ename emp.ename%TYPE;
-    v_dname dept.dname%TYPE;
-    
+    v_dname dept.dname%TYPE;    
     BEGIN
         SELECT ename, dname INTO v_ename, v_dname 
         FROM emp JOIN dept ON (emp.deptno = dept.deptno)
         WHERE emp.empno = p_empno;
         
         DBMS_OUTPUT.PUT_LINE(v_ename || ' : ' || v_dname);
-
 END;
 /
-exec printemp(7369);
+
+exec printemp(7521);
 
 
 
